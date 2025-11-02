@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App theme -->
+    <style name="Theme.SmartHomeApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">#0D47A1</item>
+        <item name="colorPrimaryVariant">#0B3C91</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <!-- Status bar / nav bar appearance -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!-- Enable Material3 typography/padding behavior compatibility -->
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
