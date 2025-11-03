@@ -9,26 +9,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
 
-        // Load the default fragment (Dashboard)
         if (savedInstanceState == null) {
-            loadFragment(DashboardFragment_test())
+            loadFragment(DashboardFragment())
         }
 
-        // Handle navigation item clicks
+        //  bottom navigation icons
         bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_dashboard -> loadFragment(DashboardFragment_test())
-                R.id.nav_devices -> loadFragment(DevicesFragment())
-                R.id.nav_profile -> loadFragment(ProfileFragment())
+            // Determine which fragment to show based on the item tapped
+            val selectedFragment: Fragment = when (item.itemId) {
+                R.id.nav_dashboard -> DashboardFragment()
+                else -> DashboardFragment() // A safe default
             }
-            true
+            // Load the selected fragment.
+            loadFragment(selectedFragment)
+            true // Return true to indicate the selection was handled
         }
     }
 
+    // helper function to make switching fragments smoother
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

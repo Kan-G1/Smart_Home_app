@@ -13,4 +13,9 @@
         <!-- Enable Material3 typography/padding behavior compatibility -->
         <item name="android:windowLightStatusBar">false</item>
     </style>
+
+    <style name="Theme.Smart_Home_app.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Smart_Home_app.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>
+
