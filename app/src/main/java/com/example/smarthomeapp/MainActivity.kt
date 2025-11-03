@@ -15,13 +15,13 @@ class MainActivity : AppCompatActivity() {
 
         // Load the default fragment (Dashboard)
         if (savedInstanceState == null) {
-            loadFragment(DashboardFragment())
+            loadFragment(DashboardFragment_test())
         }
 
         // Handle navigation item clicks
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_dashboard -> loadFragment(DashboardFragment())
+                R.id.nav_dashboard -> loadFragment(DashboardFragment_test())
                 R.id.nav_devices -> loadFragment(DevicesFragment())
                 R.id.nav_profile -> loadFragment(ProfileFragment())
             }
