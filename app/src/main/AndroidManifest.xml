@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.SmartHomeApp">
 
+        <!-- MAIN ENTRY POINT: Dashboard via MainActivity -->
         <activity
-            android:name=".AuthActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,13 +19,15 @@
             </intent-filter>
         </activity>
 
+        <!-- Secondary activity (login screen, not launcher) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".AuthActivity"
             android:exported="false" />
 
+        <!-- Background service for sensor simulation -->
         <service
             android:name=".SensorSimulationService"
             android:exported="false" />
-    </application>
 
+    </application>
 </manifest>

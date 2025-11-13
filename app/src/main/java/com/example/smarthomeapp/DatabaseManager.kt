@@ -27,9 +27,24 @@ class DatabaseManager {
                 }
             }
     }
+    // Add Device from DevicesFragment
+    fun addDevice(name: String, type: String, brightness: Int, ownerID: String, onComplete: () -> Unit) {
+        val newDevice = hashMapOf(
+            "name" to name,
+            "type" to type,
+            "brightness" to brightness,
+            "ownerID" to ownerID,
+            "state" to false,
+            "lastUpdated" to System.currentTimeMillis()
+        )
+
+        db.collection("devices").add(newDevice)
+            .addOnSuccessListener { onComplete() }
+            .addOnFailureListener { e -> Log.e("Firestore", "Error adding device", e) }
+    }
 
 
-    // 🔹 Add a demo device
+    // Add a demo device
     fun addDemoDevice(onResult: (Boolean) -> Unit) {
         val newDevice = hashMapOf(
             "name" to "Living Room Light",
@@ -50,7 +65,7 @@ class DatabaseManager {
             }
     }
 
-    // 🔹 Get all devices
+    // Get all devices
     fun getDevices(onResult: (List<Device>) -> Unit) {
         db.collection("devices")
             .get()
@@ -64,7 +79,7 @@ class DatabaseManager {
             }
     }
 
-    // 🔹 Convert document to Device object
+    // Convert document to Device object
     private fun docToDevice(doc: QueryDocumentSnapshot): Device? {
         return try {
             Device(
@@ -80,13 +95,13 @@ class DatabaseManager {
         }
     }
 
-    // 🔹 Update device state
+    // Update device state
     fun updateDeviceState(id: String, newState: Boolean) {
         db.collection("devices").document(id)
             .update("state", newState)
     }
 
-    // 🔹 Update brightness
+    // Update brightness
     fun updateBrightness(id: String, value: Int) {
         db.collection("devices").document(id)
             .update("brightness", value)
