@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.firebase.firestore.ktx.toObject
 
 class DashboardFragment : Fragment() {
+
+    private val dbManager = DatabaseManager()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -16,21 +17,26 @@ class DashboardFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
-        // Temporary fake user ID (replace later with Firebase Auth UID)
+        // Temporary fake user ID
         val userId = "demoUser123"
 
-        // Listen for devices belonging to that user
-        DatabaseManager.getDevicesForUser(userId)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    println("Firestore error: ${error.message}")
-                    return@addSnapshotListener
-                }
+        dbManager.getDevicesForUser(
+            userId,
+            onSnapshot = { snapshot ->
+                if (snapshot != null) {
+                    val devices = snapshot.documents.mapNotNull { it.toObject(Device::class.java) }
 
-                val devices = snapshot?.documents?.mapNotNull { it.toObject(Device::class.java) }
-                println("✅ Devices loaded:")
-                devices?.forEach { println("${it.name} | State: ${it.state}") }
+                    // Example output for debugging
+                    println("Devices loaded (${devices.size}):")
+                    devices.forEach { println("${it.name} | State: ${it.state}") }
+
+                    // TODO: Update dashboard UI here (e.g., power usage summary)
+                }
+            },
+            onError = { e ->
+                println("Firestore error: ${e.message}")
             }
+        )
 
         return view
     }

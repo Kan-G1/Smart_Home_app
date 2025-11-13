@@ -6,35 +6,32 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
 
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //initialize Firebase
         FirebaseApp.initializeApp(this)
         setContentView(R.layout.activity_main)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
-
+        // Load default fragment
         if (savedInstanceState == null) {
-            loadFragment(DashboardFragment())
+            replaceFragment(DashboardFragment())
         }
 
-        //  bottom navigation icons
+        // Handle navigation
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         bottomNav.setOnItemSelectedListener { item ->
-            // Determine which fragment to show based on the item tapped
-            val selectedFragment: Fragment = when (item.itemId) {
-                R.id.nav_dashboard -> DashboardFragment()
-                else -> DashboardFragment() // A safe default
+            when (item.itemId) {
+                R.id.nav_dashboard -> replaceFragment(DashboardFragment())
+                R.id.nav_devices -> replaceFragment(DevicesFragment())
+                // you can add R.id.nav_profile -> replaceFragment(ProfileFragment()) later
             }
-            // Load the selected fragment.
-            loadFragment(selectedFragment)
-            true // Return true to indicate the selection was handled
+            true
         }
     }
 
-    // helper function to make switching fragments smoother
-    private fun loadFragment(fragment: Fragment) {
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()

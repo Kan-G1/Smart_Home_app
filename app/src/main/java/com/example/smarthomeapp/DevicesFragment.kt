@@ -4,36 +4,45 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class DevicesFragment : Fragment() {
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: DeviceAdapter
+    private val dbManager = DatabaseManager()
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val view = inflater.inflate(R.layout.fragment_devices, container, false)
 
-        // Example: add a new device when this fragment loads
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val newDevice = Device(
-                    name = "Living Room Light",
-                    type = "Light",
-                    ownerId = "demoUser123"
-                )
-                DatabaseManager.addDevice(newDevice)
-                println("Device added to Firestore!")
-            } catch (e: Exception) {
-                println("Error adding device: ${e.message}")
-            }
+        recyclerView = view.findViewById(R.id.rvDevicesList)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        adapter = DeviceAdapter(emptyList(),
+            onStateChanged = { device, newState -> dbManager.updateDeviceState(device.id, newState) },
+            onBrightnessChanged = { device, value -> dbManager.updateBrightness(device.id, value) }
+        )
+
+        recyclerView.adapter = adapter
+
+        val btnAdd = view.findViewById<Button>(R.id.btnAddDevice)
+        btnAdd.setOnClickListener {
+            dbManager.addDemoDevice { loadDevices() }
         }
 
+        loadDevices()
         return view
+    }
+
+    private fun loadDevices() {
+        dbManager.getDevices { devices ->
+            adapter.updateList(devices)
+        }
     }
 }
