@@ -9,12 +9,14 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 
 class DevicesFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DeviceAdapter
     private val dbManager = DatabaseManager()
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,18 +24,25 @@ class DevicesFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_devices, container, false)
 
+        auth = FirebaseAuth.getInstance()
         recyclerView = view.findViewById(R.id.rvDevicesList)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = DeviceAdapter(
             emptyList(),
             onStateChanged = { device, newState -> dbManager.updateDeviceState(device.id, newState) },
-            onBrightnessChanged = { device, value -> dbManager.updateBrightness(device.id, value) }
+            onBrightnessChanged = { device, value -> dbManager.updateBrightness(device.id, value) },
+            onDeleteClicked = { device ->
+                dbManager.deleteDevice(device.id, {
+                    Toast.makeText(context, "Device deleted", Toast.LENGTH_SHORT).show()
+                }, {
+                    Toast.makeText(context, "Error deleting device", Toast.LENGTH_SHORT).show()
+                })
+            }
         )
 
         recyclerView.adapter = adapter
 
-        // Add Device button
         val btnAdd = view.findViewById<Button>(R.id.btnAddDevice)
         btnAdd.setOnClickListener { showAddDeviceDialog() }
 
@@ -41,21 +50,25 @@ class DevicesFragment : Fragment() {
         return view
     }
 
-    // --- Load all devices from Firebase ---
     private fun loadDevices() {
-        dbManager.getDevices { devices ->
-            if (isAdded) adapter.updateList(devices)
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            dbManager.getDevicesForUser(currentUser.uid, {
+                snapshot ->
+                if (snapshot != null) {
+                    val devices = snapshot.documents.mapNotNull { it.toObject(Device::class.java) }
+                    if (isAdded) adapter.updateList(devices)
+                }
+            }, {})
         }
     }
 
-    // --- Show Add Device Dialog ---
     private fun showAddDeviceDialog() {
         val context = context ?: return
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_device, null)
 
         val nameInput = dialogView.findViewById<EditText>(R.id.etDeviceName)
         val typeInput = dialogView.findViewById<EditText>(R.id.etDeviceType)
-        val ownerInput = dialogView.findViewById<EditText>(R.id.etOwnerID)
         val brightnessSeek = dialogView.findViewById<SeekBar>(R.id.seekBrightness)
         val brightnessLabel = dialogView.findViewById<TextView>(R.id.tvBrightnessLabel)
         val backButton = dialogView.findViewById<ImageButton>(R.id.btnBack)
@@ -81,22 +94,26 @@ class DevicesFragment : Fragment() {
         submitButton.setOnClickListener {
             val name = nameInput.text.toString().trim()
             val type = typeInput.text.toString().trim()
-            val owner = ownerInput.text.toString().trim()
 
-            if (name.isEmpty() || type.isEmpty() || owner.isEmpty()) {
+            if (name.isEmpty() || type.isEmpty()) {
                 Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            dbManager.addDevice(
-                name = name,
-                type = type,
-                brightness = currentBrightness,
-                ownerID = owner
-            ) {
-                Toast.makeText(context, "Device added!", Toast.LENGTH_SHORT).show()
-                if (isAdded) loadDevices()
-                dialog.dismiss()
+            val currentUser = auth.currentUser
+            if (currentUser != null) {
+                val device = Device(
+                    name = name,
+                    type = type,
+                    brightness = currentBrightness,
+                    ownerID = currentUser.uid
+                )
+                dbManager.addDevice(device, {
+                    Toast.makeText(context, "Device added!", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }, {
+                    Toast.makeText(context, "Error adding device", Toast.LENGTH_SHORT).show()
+                })
             }
         }
 

@@ -3,6 +3,7 @@ package com.example.smarthomeapp
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Switch
@@ -12,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 class DeviceAdapter(
     private var devices: List<Device>,
     private val onStateChanged: (Device, Boolean) -> Unit,
-    private val onBrightnessChanged: (Device, Int) -> Unit
+    private val onBrightnessChanged: (Device, Int) -> Unit,
+    private val onDeleteClicked: (Device) -> Unit
 ) : RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
 
     class DeviceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -21,6 +23,7 @@ class DeviceAdapter(
         val brightness: SeekBar = view.findViewById(R.id.seekValue)
         val valueText: TextView = view.findViewById(R.id.tvValue)
         val statusIcon: ImageView = view.findViewById(R.id.ivStatus)
+        val deleteButton: ImageButton = view.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
@@ -50,12 +53,17 @@ class DeviceAdapter(
         holder.brightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 holder.valueText.text = "Value: $progress%"
-                if (fromUser) onBrightnessChanged(device, progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                onBrightnessChanged(device, holder.brightness.progress)
+            }
         })
+
+        holder.deleteButton.setOnClickListener {
+            onDeleteClicked(device)
+        }
     }
 
     override fun getItemCount(): Int = devices.size

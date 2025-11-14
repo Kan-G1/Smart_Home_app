@@ -48,15 +48,6 @@
         android:inputType="textCapWords"
         android:layout_marginTop="12dp" />
 
-    <!-- Owner ID -->
-    <EditText
-        android:id="@+id/etOwnerID"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Owner ID"
-        android:inputType="text"
-        android:layout_marginTop="12dp" />
-
     <!-- Brightness Slider -->
     <TextView
         android:id="@+id/tvBrightnessLabel"

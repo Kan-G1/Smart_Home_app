@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +7,6 @@
     android:background="@color/design_dark_blue"
     tools:context=".DashboardFragment">
 
-    <!--     Header     -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -20,14 +19,12 @@
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <!-- content for header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- top row -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -48,7 +45,6 @@
                         android:backgroundTint="@color/design_accent_red"
                         android:textColor="@android:color/white"/>
 
-                    <!-- CardView to make the profile image circular -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
@@ -64,8 +60,8 @@
                     </androidx.cardview.widget.CardView>
                 </RelativeLayout>
 
-                <!-- Greeting Text -->
                 <TextView
+                    android:id="@+id/tvGreeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -73,6 +69,7 @@
                     android:textColor="@color/design_text_secondary" />
 
                 <TextView
+                    android:id="@+id/tvUsername"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hello, John Doe"
@@ -85,7 +82,6 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- SCROLLABLE CONTENT SECTION  -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -100,28 +96,18 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Horizontal scroll for cards -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none">
 
                 <LinearLayout
+                    android:id="@+id/devices_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- Card 1: Appliances -->
-                    <include layout="@layout/item_device_card" />
-                    <!-- Card 2: Lights -->
-                    <include layout="@layout/item_device_card" />
-                    <!-- Card 3: AC -->
-                    <include layout="@layout/item_device_card" />
-
-                </LinearLayout>
+                    android:orientation="horizontal" />
             </HorizontalScrollView>
 
-            <!-- Summary-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -131,7 +117,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <!-- graph -->
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
@@ -140,7 +125,6 @@
                 android:scaleType="fitXY"
                 android:contentDescription="Summary Graph Placeholder"/>
 
-            <!-- placeholder for the time buttons -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

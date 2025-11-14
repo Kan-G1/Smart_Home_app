@@ -15,12 +15,14 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/tvDeviceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Appliances"
             android:textColor="@color/design_text_secondary" />
 
         <ImageView
+            android:id="@+id/ivDeviceIcon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
@@ -28,6 +30,7 @@
             app:tint="@color/design_text_primary"/>
 
         <TextView
+            android:id="@+id/tvDeviceStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -37,6 +40,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvDeviceStatusUnit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="kWh"

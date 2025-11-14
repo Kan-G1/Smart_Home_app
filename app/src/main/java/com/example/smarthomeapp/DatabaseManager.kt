@@ -2,108 +2,67 @@ package com.example.smarthomeapp
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 
 class DatabaseManager {
     private val db = FirebaseFirestore.getInstance()
+    private val devicesCollection = db.collection("devices")
 
-    // 🔹 Get all devices for a specific user in real-time
     fun getDevicesForUser(
         userId: String,
         onSnapshot: (QuerySnapshot?) -> Unit,
         onError: (Exception) -> Unit
     ): ListenerRegistration {
-        // You can filter devices that belong to a user (if you add "ownerID" field)
-        return db.collection("devices")
-            // .whereEqualTo("ownerID", userId)  ← Uncomment when you add per-user devices
+        Log.d("DatabaseManager", "Fetching devices for user: $userId")
+        return devicesCollection
+            .whereEqualTo("ownerID", userId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    Log.e("DatabaseManager", "Error listening for updates", e)
+                    Log.e("DatabaseManager", "Error listening for device updates", e)
                     onError(e)
                 } else {
+                    Log.d("DatabaseManager", "Successfully fetched ${snapshot?.size() ?: 0} devices")
                     onSnapshot(snapshot)
                 }
             }
     }
-    // Add Device from DevicesFragment
-    fun addDevice(name: String, type: String, brightness: Int, ownerID: String, onComplete: () -> Unit) {
-        val newDevice = hashMapOf(
-            "name" to name,
-            "type" to type,
-            "brightness" to brightness,
-            "ownerID" to ownerID,
-            "state" to false,
-            "lastUpdated" to System.currentTimeMillis()
-        )
 
-        db.collection("devices").add(newDevice)
-            .addOnSuccessListener { onComplete() }
-            .addOnFailureListener { e -> Log.e("Firestore", "Error adding device", e) }
-    }
-
-
-    // Add a demo device
-    fun addDemoDevice(onResult: (Boolean) -> Unit) {
-        val newDevice = hashMapOf(
-            "name" to "Living Room Light",
-            "type" to "Light",
-            "brightness" to 75,
-            "state" to true
-        )
-
-        db.collection("devices")
-            .add(newDevice)
+    fun addDevice(device: Device, onComplete: () -> Unit, onError: (Exception) -> Unit) {
+        Log.d("DatabaseManager", "Adding new device: ${device.name}")
+        devicesCollection.add(device)
             .addOnSuccessListener {
-                Log.d("DatabaseManager", "Device added with ID: ${it.id}")
-                onResult(true)
+                Log.d("DatabaseManager", "Device added successfully")
+                onComplete()
             }
             .addOnFailureListener { e ->
                 Log.e("DatabaseManager", "Error adding device", e)
-                onResult(false)
+                onError(e)
             }
     }
 
-    // Get all devices
-    fun getDevices(onResult: (List<Device>) -> Unit) {
-        db.collection("devices")
-            .get()
-            .addOnSuccessListener { result ->
-                val devices = result.mapNotNull { doc -> docToDevice(doc) }
-                onResult(devices)
+    fun updateDeviceState(deviceId: String, newState: Boolean) {
+        Log.d("DatabaseManager", "Updating state for device $deviceId to $newState")
+        devicesCollection.document(deviceId).update("state", newState)
+            .addOnFailureListener { e -> Log.e("DatabaseManager", "Error updating device state", e) }
+    }
+
+    fun updateBrightness(deviceId: String, brightness: Int) {
+        Log.d("DatabaseManager", "Updating brightness for device $deviceId to $brightness")
+        devicesCollection.document(deviceId).update("brightness", brightness)
+            .addOnFailureListener { e -> Log.e("DatabaseManager", "Error updating brightness", e) }
+    }
+
+    fun deleteDevice(deviceId: String, onComplete: () -> Unit, onError: (Exception) -> Unit) {
+        Log.d("DatabaseManager", "Deleting device: $deviceId")
+        devicesCollection.document(deviceId).delete()
+            .addOnSuccessListener {
+                Log.d("DatabaseManager", "Device deleted successfully")
+                onComplete()
             }
             .addOnFailureListener { e ->
-                Log.e("DatabaseManager", "Error fetching devices", e)
-                onResult(emptyList())
+                Log.e("DatabaseManager", "Error deleting device", e)
+                onError(e)
             }
-    }
-
-    // Convert document to Device object
-    private fun docToDevice(doc: QueryDocumentSnapshot): Device? {
-        return try {
-            Device(
-                id = doc.id,
-                name = doc.getString("name") ?: "Unknown",
-                type = doc.getString("type") ?: "Unknown",
-                brightness = (doc.getLong("brightness") ?: 0L).toInt(),
-                state = doc.getBoolean("state") ?: false
-            )
-        } catch (e: Exception) {
-            Log.e("DatabaseManager", "Error converting document", e)
-            null
-        }
-    }
-
-    // Update device state
-    fun updateDeviceState(id: String, newState: Boolean) {
-        db.collection("devices").document(id)
-            .update("state", newState)
-    }
-
-    // Update brightness
-    fun updateBrightness(id: String, value: Int) {
-        db.collection("devices").document(id)
-            .update("brightness", value)
     }
 }
