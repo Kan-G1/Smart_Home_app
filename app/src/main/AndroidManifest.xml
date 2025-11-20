@@ -2,6 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- CameraX requires this -->
+    <uses-feature android:name="android.hardware.camera.any" />
 
     <application
         android:allowBackup="true"
@@ -10,6 +21,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.SmartHomeApp"
         android:enableOnBackInvokedCallback="true">
+
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
 
         <!-- MAIN ENTRY POINT: Dashboard via MainActivity -->
         <activity
@@ -26,10 +42,22 @@
             android:name=".AuthActivity"
             android:exported="false" />
 
-        <!-- Background service for sensor simulation -->
-        <service
-            android:name=".SensorSimulationService"
-            android:exported="false" />
+        <!-- Geofence Receiver -->
+        <receiver android:name=".GeofenceBroadcastReceiver" android:exported="true"/>
+
+        <!-- Sensor Simulation Service for Testing -->
+        <service android:name=".SensorSimulationService"
+            android:foregroundServiceType="location" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 </manifest>

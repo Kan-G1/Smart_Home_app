@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,6 +18,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private lateinit var tvDisplayName: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,37 +29,20 @@ class ProfileFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        val currentUser = auth.currentUser
+        tvDisplayName = view.findViewById(R.id.tvDisplayName)
         val tvEmail = view.findViewById<TextView>(R.id.tvEmail)
-        val etDisplayName = view.findViewById<EditText>(R.id.etDisplayName)
-        val btnUpdateProfile = view.findViewById<Button>(R.id.btnUpdateProfile)
+        val btnSetHomeLocation = view.findViewById<Button>(R.id.btnSetHomeLocation)
         val btnSignOut = view.findViewById<Button>(R.id.btnSignOut)
 
-        if (currentUser != null) {
-            tvEmail.text = "Email: ${currentUser.email}"
-            val userDocRef = db.collection("users").document(currentUser.uid)
-            userDocRef.get().addOnSuccessListener { document ->
-                if (document != null) {
-                    val user = document.toObject(User::class.java)
-                    etDisplayName.setText(user?.displayName)
-                }
-            }
-        }
+        loadUserProfile()
 
-        btnUpdateProfile.setOnClickListener {
-            val displayName = etDisplayName.text.toString().trim()
-            if (displayName.isNotEmpty()) {
-                if (currentUser != null) {
-                    val userDocRef = db.collection("users").document(currentUser.uid)
-                    userDocRef.update("displayName", displayName)
-                        .addOnSuccessListener {
-                            Toast.makeText(context, "Profile updated!", Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(context, "Error updating profile: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
-                }
-            }
+        tvDisplayName.setOnClickListener { showEditDisplayNameDialog() }
+
+        btnSetHomeLocation.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, MapSettingsFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         btnSignOut.setOnClickListener {
@@ -69,5 +54,51 @@ class ProfileFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun loadUserProfile() {
+        val currentUser = auth.currentUser ?: return
+        view?.findViewById<TextView>(R.id.tvEmail)?.text = currentUser.email
+
+        val userDocRef = db.collection("users").document(currentUser.uid)
+        userDocRef.get().addOnSuccessListener { document ->
+            if (document != null && isAdded) {
+                val user = document.toObject(User::class.java)
+                tvDisplayName.text = user?.displayName ?: "Set Display Name"
+            }
+        }
+    }
+
+    private fun showEditDisplayNameDialog() {
+        val context = context ?: return
+        val currentUser = auth.currentUser ?: return
+
+        val editText = EditText(context).apply {
+            setText(tvDisplayName.text)
+        }
+
+        AlertDialog.Builder(context)
+            .setTitle("Edit Display Name")
+            .setView(editText)
+            .setPositiveButton("Save") { _, _ ->
+                val newName = editText.text.toString().trim()
+                if (newName.isNotEmpty()) {
+                    updateDisplayName(currentUser.uid, newName)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun updateDisplayName(userId: String, newName: String) {
+        db.collection("users").document(userId)
+            .update("displayName", newName)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Profile updated!", Toast.LENGTH_SHORT).show()
+                loadUserProfile() // Refresh the user profile data
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Error updating profile: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

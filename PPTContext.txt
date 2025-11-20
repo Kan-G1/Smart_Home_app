@@ -1,0 +1,63 @@
+### CONTEXT FOR GROUP PRESENTATION ###
+
+This document provides a slide-by-slide outline and script for your group presentation. The goal is to professionally showcase the app's design, architecture, and features, hitting all the requirements from the rubric.
+
+---
+
+**Slide 1: Title Slide**
+- **App Name:** Smart Home Control
+- **Team Members:** [List Your Names Here]
+- **Course:** [Your Course Name]
+
+**Slide 2: Introduction & Vision**
+- **The Problem:** The modern smart home is fragmented. Users often need multiple apps to manage different devices, leading to a clunky and disjointed experience.
+- **Our Solution:** A single, centralized, and elegant Android application that provides seamless control and real-time monitoring of all smart devices. Our focus is on a clean UI, intuitive design, and a powerful, responsive backend.
+
+**Slide 3: App Design & Architecture**
+- **Architecture:** We used an **MVVM-like (Model-View-ViewModel) architecture**. 
+    - **Views (XML):** Define the UI structure.
+    - **Fragments (The "View-Model"):** Hold the UI logic, manage state, and communicate with the backend.
+    - **DatabaseManager (The "Model/Repository"):** A dedicated class that centralizes all communication with Firebase, abstracting the data source from the UI.
+    - This pattern promotes **separation of concerns**, making the code cleaner and easier to maintain.
+- **Backend:** We chose **Firebase as a Backend-as-a-Service (BaaS)**.
+    - **Firebase Authentication:** Handles our secure user login and registration.
+    - **Firebase Firestore:** Acts as our real-time NoSQL database. All device data is stored here, and any changes are instantly synced to the app for a live, responsive feel.
+
+**Slide 4: Live Demo - A Fully Working App (Script)**
+
+**Presenter:** "I will now demonstrate the core features of our Smart Home app."
+
+1.  **Authentication (UI, Authentication):**
+    - *"The user's journey begins with our clean and professional login screen. This is the app's first impression, so we made sure it was polished."*
+    - **Action:** Show the login screen. Point out the modern Material Design text fields.
+    - **Action:** Tap the 'Sign Up' text to toggle to registration mode. Create a new user account.
+
+2.  **The Dashboard (UI, Database, Sensors):**
+    - *"After logging in, the user lands on the dashboard, the central hub of the app."*
+    - **Action:** Point out the key elements: the personalized greeting, the date, and the horizontally scrolling list of devices for quick access.
+    - **Action:** Toggle a device (like a light) ON and OFF from the dashboard. Show the **'Total Power' meter updating instantly** in real-time. Explain this simulates sensor data and is calculated by summing the wattage of active devices from our Firestore database.
+
+3.  **The Geofence Map (Maps):**
+    - *"Below, we have a lightweight static map that provides a visual confirmation of the user's home geofence, using the Google Maps Static API."*
+    - **Action:** Point to the map image on the dashboard.
+
+4.  **The Devices Page (UI, Database):**
+    - *"The Devices tab provides a more detailed control center."*
+    - **Action:** Navigate to the Devices page. Highlight the professional **grid layout** and, most importantly, how devices are **grouped by room**.
+    - **Action:** Use the **Floating Action Button** to add a new device (e.g., a "Bedroom Camera").
+    - **Action:** Show the new camera appearing instantly in the correct "Bedroom" group.
+
+5.  **Camera & Video (Video, Camera/Sensors):**
+    - *"Our app supports different device types. If we tap on a camera..."*
+    - **Action:** Tap on any camera device. It will navigate to a new screen.
+    - *"...it takes us to the Camera Fragment. This is where a live video stream from the device would be displayed. This also demonstrates our use of the camera as a sensor type."* (Even if it's just a placeholder, you are demonstrating the requirement).
+
+6.  **The Profile Page (UI, Database):**
+    - *"Finally, the Profile page allows for user personalization."*
+    - **Action:** Navigate to the Profile page. Point out the clean, card-based UI.
+    - **Action:** Tap the user's display name. Demonstrate the **'tap-to-edit'** dialog. Change the name and show it updating instantly.
+
+**Presenter:** "This concludes the demo. We have shown a fully working app that meets all the core requirements, including a polished UI, user authentication, maps integration, sensor data simulation, placeholders for video, and a real-time database."
+
+**Slide 5: Q&A**
+- Open the floor for questions.

@@ -28,6 +28,12 @@ class DatabaseManager {
             }
     }
 
+    fun getDevicesForUserOnce(userId: String, onComplete: (QuerySnapshot?) -> Unit, onError: (Exception) -> Unit) {
+        devicesCollection.whereEqualTo("ownerID", userId).get()
+            .addOnSuccessListener { onComplete(it) }
+            .addOnFailureListener { onError(it) }
+    }
+
     fun addDevice(device: Device, onComplete: () -> Unit, onError: (Exception) -> Unit) {
         Log.d("DatabaseManager", "Adding new device: ${device.name}")
         devicesCollection.add(device)
@@ -45,6 +51,12 @@ class DatabaseManager {
         Log.d("DatabaseManager", "Updating state for device $deviceId to $newState")
         devicesCollection.document(deviceId).update("state", newState)
             .addOnFailureListener { e -> Log.e("DatabaseManager", "Error updating device state", e) }
+    }
+
+    fun updateDevicePower(deviceId: String, power: Int) {
+        Log.d("DatabaseManager", "Updating power for device $deviceId to $power W")
+        devicesCollection.document(deviceId).update("power", power)
+            .addOnFailureListener { e -> Log.e("DatabaseManager", "Error updating device power", e) }
     }
 
     fun updateBrightness(deviceId: String, brightness: Int) {

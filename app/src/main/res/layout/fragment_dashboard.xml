@@ -30,6 +30,7 @@
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:id="@+id/grid_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_grid"
@@ -37,15 +38,8 @@
                         app:tint="@android:color/white"
                         android:contentDescription="Menu" />
 
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2 Events"
-                        android:layout_centerInParent="true"
-                        android:backgroundTint="@color/design_accent_red"
-                        android:textColor="@android:color/white"/>
-
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/profile_card"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_alignParentEnd="true"
@@ -96,17 +90,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <HorizontalScrollView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/devices_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:id="@+id/devices_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-            </HorizontalScrollView>
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -117,21 +106,85 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/ic_graph_placeholder"
-                android:scaleType="fitXY"
-                android:contentDescription="Summary Graph Placeholder"/>
-
-            <TextView
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="[ 1D  1W  1M  3M  All ]"
-                android:textAlignment="center"
-                android:textColor="@color/design_text_secondary"/>
+                app:cardCornerRadius="8dp"
+                android:layout_marginTop="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_power_usage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Total Power: 0 W"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ProgressBar
+                        android:id="@+id/power_progress_bar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:max="1000" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btn_start_simulation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start Simulation"/>
+
+                <Button
+                    android:id="@+id/btn_stop_simulation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Stop Simulation"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Home Geofence"
+                android:textColor="@color/design_text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="200dp" 
+                app:cardCornerRadius="8dp"
+                android:layout_marginTop="8dp"
+                app:cardElevation="4dp">
+
+                <ImageView
+                    android:id="@+id/iv_static_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Static map view of the home geofence" />
+
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

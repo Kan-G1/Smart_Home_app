@@ -1,42 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/design_light_blue"
     tools:context=".DevicesFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_above="@id/bottom_nav">
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Devices"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/design_text_primary"
+            android:layout_marginBottom="16dp"/>
 
         <Button
-            android:id="@+id/btnAddDevice"
+            android:id="@+id/btnViewAllClips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Device"
-            android:backgroundTint="@color/design_dark_blue"
+            android:text="View All Clips"
+            android:backgroundTint="@color/design_accent_red"
             android:textColor="@android:color/white"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvDevicesList"
             android:layout_width="match_parent"
-            android:layout_height="641dp"
+            android:layout_height="0dp"
             android:layout_marginTop="12dp"
             android:layout_weight="1" />
+
     </LinearLayout>
 
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:layout_gravity="bottom"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_nav_menu" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_input_add"
+        app:tint="@android:color/white"
+        android:contentDescription="Add a new device"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

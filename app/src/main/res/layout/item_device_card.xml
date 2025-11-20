@@ -5,7 +5,7 @@
     android:layout_height="150dp"
     android:layout_margin="8dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp">
+    app:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,21 +29,17 @@
             android:src="@drawable/ic_fridge"
             app:tint="@color/design_text_primary"/>
 
+        <Switch
+            android:id="@+id/switchDeviceState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
         <TextView
             android:id="@+id/tvDeviceStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="5.6"
-            android:textColor="@color/design_text_primary"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvDeviceStatusUnit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="kWh"
+            android:text="Off"
             android:textColor="@color/design_text_secondary" />
 
     </LinearLayout>

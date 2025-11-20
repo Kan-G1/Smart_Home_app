@@ -1,0 +1,51 @@
+### CONTEXT FOR FINAL PROJECT REPORT ###
+
+This document provides the detailed information required to write your final project report. It is structured to align perfectly with the rubric provided.
+
+---
+
+## Part 1: Project Details & Results (18 Marks)
+
+### **1.1. Project Introduction & Goals**
+
+- **Project Title:** Smart Home Control
+- **Objective:** The primary goal of this project was to develop a centralized, modern, and user-friendly Android application for managing and monitoring smart home devices. We aimed to solve the problem of fragmented user experiences by creating a single, cohesive platform that handles everything from device control to user authentication and real-time status updates.
+- **Core Technologies:** The project was built using **Kotlin**, the officially recommended language for modern Android development. For our backend, we leveraged **Firebase** (Authentication and Firestore) to provide robust, real-time, and scalable services without the need to manage our own server infrastructure.
+
+### **1.2. Key Features & Implementation Results**
+
+- **Unified User Authentication:**
+    - **Result:** A single, beautifully designed authentication screen was implemented in `AuthActivity`. It handles both user registration and login with a clean, state-driven UI toggle. Firebase Authentication provides the secure backend, creating user accounts and managing sessions.
+
+- **Dynamic & Informative Dashboard:**
+    - **Result:** The `DashboardFragment` serves as the app's main hub. It features a personalized user greeting, a horizontally scrolling `RecyclerView` for quick device access, and a live power consumption meter. This screen provides an immediate, at-a-glance overview of the smart home's status.
+
+- **Advanced Device Management:**
+    - **Result:** The `DevicesFragment` was a major focus of our UI efforts. We implemented a `GridLayoutManager` to display devices in a grid, making efficient use of screen space. Crucially, we implemented logic to group devices by their assigned "room" and display them under sorted headers (e.g., "Bedroom," "Living Room"). This was achieved by using a `RecyclerView.Adapter` capable of handling multiple view types (headers and device items).
+
+- **Real-time Database & Sensor Simulation:**
+    - **Result:** We used **Firebase Firestore** as our real-time database. All device states (on/off, brightness) are stored in Firestore. The app uses snapshot listeners to listen for changes, ensuring that any update is instantly reflected in the UI without needing a refresh. The "Total Power" meter on the dashboard simulates sensor data by fetching device wattage from the database and calculating the total for all active devices in real-time.
+
+- **Maps & Geofencing Integration:**
+    - **Result:** The app integrates Google Maps technology in two ways. First, `MapSettingsFragment` allows the user to set a home location and geofence radius. Second, `DashboardFragment` displays a **static map image** from the Google Maps Static API, providing a lightweight visual confirmation of the geofence without the performance overhead of a full interactive map.
+
+- **Modern & Consistent UI/UX:**
+    - **Result:** A consistent and professional design language was applied across the entire app, using Material Design components like `CardView`, `TextInputLayout`, and `FloatingActionButton`. We refactored every screen—from the login page to the dashboard and profile—to ensure a cohesive and high-quality user experience.
+
+## Part 2: Implementation Challenges (2 Marks)
+
+1.  **Google Maps Static API URL Length Limit:**
+    - **Challenge:** Our initial implementation for drawing the geofence circle on the static map was *too precise*. It generated a path with many coordinate points, resulting in a URL that exceeded the Google Maps Static API's character limit. This caused the API to return an error, and the map image failed to load.
+    - **Solution:** We resolved this by optimizing the URL in two ways: first, we reduced the number of points used to draw the circle (approximating it with an octagon), and second, we formatted all coordinate values to a lower precision (6 decimal places). This dramatically shortened the URL, keeping it well within the API's limits and allowing the map to load successfully.
+
+2.  **RecyclerView with Multiple View Types:**
+    - **Challenge:** To group devices by room, our `DeviceAdapter` needed to display two different kinds of layouts: headers for room names and cards for the devices themselves. This required a significant refactor from a simple adapter to one that could manage a heterogeneous list of data.
+    - **Solution:** We re-architected the `DeviceAdapter` to handle a `List<Any>`. We overrode the `getItemViewType` method to differentiate between a `String` (for a header) and a `Device` object. The `onCreateViewHolder` was then updated to inflate the correct XML layout for each type, enabling our clean, grouped grid layout.
+
+## Part 3: Lessons Learned (2 Marks)
+
+1.  **API Limitations Are as Important as API Features:** The static map issue taught us a valuable lesson: it's not enough to just know how to use an API. We must also understand its constraints. Reading the documentation on rate limits, URL length limits, and other constraints is a critical part of the implementation process. Our initial failure was not one of logic, but of research.
+
+2.  **The Importance of a Consistent UI/UX:** As we built the app, the visual and functional gap between our new dashboard and the old, unstyled fragments became glaringly obvious. This reinforced the lesson that a great app is more than a collection of features; it's a single, cohesive experience. Taking the time to refactor the Devices, Profile, and Login screens to match the new design language was critical and dramatically increased the overall quality and professionalism of the final product.
+
+3.  **The Power of a Centralized Data Layer:** Creating the `DatabaseManager` class early on proved to be a fantastic decision. Instead of having Firestore queries scattered across multiple fragments, we had a single, clean point of access. When we needed to add new functionality, like updating a device's power value, we only had to add a new method to `DatabaseManager`. This made the code far easier to maintain and debug.
