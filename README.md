@@ -59,5 +59,3 @@ To build and run this project, you will need to perform the following steps:
     - Let Gradle sync the dependencies.
     - Build and run the app on an emulator or a physical device.
 
----
-*This README was generated with the assistance of an AI developer assistant.*
